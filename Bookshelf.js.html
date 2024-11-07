@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lo-fi Music Stream with Planner and File Drop</title>
+    <style>
+        #noteArea {
+            width: 300px;
+            height: 400px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+            box-sizing: border-box;
+            display: none;
+            position: absolute;
+            top: 15%;
+            right: 10px;
+            z-index: 1000;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        #noteArea textarea {
+            width: 100%;
+            height: 300px;
+            background-color: #333;
+            color: white;
+            border: none;
+            padding: 10px;
+            font-size: 1em;
+            border-radius: 5px;
+        }
+
+        #noteArea button {
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #444;
+            border: none;
+            color: white;
+            font-size: 1em;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        #noteArea button:hover {
+            background-color: #555;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            text-align: center;
+            background-attachment: fixed;
+            transition: background-image 0.5s ease-in-out;
+            background-size: cover;
+            background-position: center;
+            background-image: url('images/background1.gif');
+        }
+
+        #topRightText {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 2em;
+        }
+
+        #mainContent {
+            display: flex;
+            flex: 1;
+            padding: 20px;
+            box-sizing: border-box;
+            margin-bottom: 60px;
+        }
+
+        #planner {
+            width: 300px;
+            background: rgba(0, 0, 0, 0.6);
+            padding: 20px;
+            border-radius: 10px;
+            box-sizing: border-box;
+            display: none;
+            position: absolute;
+            top: 10%;
+            left: 0;
+            z-index: 1000;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        #tasks {
+            margin-top: 20px;
+        }
+
+        .task {
+            background-color: #333;
+            padding: 10px;
+            margin: 5px 0;
+            border-radius: 5px;
+            text-align: left;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .task input[type="checkbox"] {
+            margin-right: 10px;
+        }
+
+        .task.completed {
+            text-decoration: line-through;
+            color: #888;
+        }
+
+        #backgroundSelector {
+            display: inline-block;
+            margin-left: 20px;
+        }
+
+        #backgroundSelector label {
+            display: block;
+            margin-bottom: 10px;
+        }
+
+        #backgroundSelector select {
+            padding: 10px;
+            border-radius: 5px;
+            border: none;
+            font-size: 1em;
+            background-color: #444;
+            color: white;
+        }
+
+        #musicPlayer {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: rgba(0, 0, 0, 0.8);
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-top: 1px solid #333;
+            box-sizing: border-box;
+        }
+
+        #musicPlayer button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            margin: 0 20px;
+            cursor: pointer;
+        }
+
+        #musicPlayer audio {
+            width: 300px;
+            outline: none;
+        }
+
+        #drop-area {
+            width: 40%;
+            height: 650px;
+            border: 3px dashed transparent;
+            border-radius: 10px;
+            display: none;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: #ffffff;
+            font-size: 16px;
+            background-color: #000000;
+            transition: background-color 0.3s;
+            overflow: hidden;
+            position: absolute;
+            resize: both;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 1000;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+        }
+
+        #drop-area.dragover {
+            background-color: #e0e0e0;
+        }
+         #resize-handle {
+            width: 10px;
+            height: 10px;
+            background: #333;
+            position: absolute;
+            right: 0;
+            bottom: 0;
+            cursor: se-resize;
+        }
+
+        #drop-area embed {
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="topRightText"><img src='logo.png' height="100" width="300"></div>
+    <div id="mainContent">
+        <!-- Optional: Other content can go here -->
+    </div>
+
+    <!-- Music Player -->
+    <div id="musicPlayer">
+        <button onclick="previousTrack()" title="Previous Track">&#9664;</button>
+        <audio id="audioPlayer" controls>
+            <source src="lofi1.mp3" type="audio/mp3">
+            Your browser does not support the audio element.
+        </audio>
+        <button onclick="nextTrack()" title="Next Track">&#9654;</button>
+        <button onclick="togglePlanner()" title="Planner">&#128197;</button>
+        <button onclick="toggleDropArea()" title="File viewer">&#128190;</button>
+        <button onclick="toggleNoteArea()" title="Notes">&#9998;</button>
+        <button onclick="toggleFullscreen()" title="Fullscreen">&#x26F6;</button>
+        
+        <!-- Moved Background Selector to Music Player -->
+        <div id="backgroundSelector">
+            <select id="backgroundSelect" onchange="changeBackground()">
+                <option value="images/background1.gif">Blue Lagoon</option>
+                <option value="images/background4.gif">Cafe</option>
+                <option value="images/background6.gif">Beachside Living room</option>
+                <option value="images/background7.gif">Sunset Window</option>
+                <option value="images/background8.gif">Midnight Street</option>
+            </select>
+        </div>
+    </div>
+
+    <!-- Note Area -->
+    <div id="noteArea">
+        <textarea id="noteTextArea" placeholder="Write your notes here..."></textarea>
+        <button onclick="exportNotes()">Save Notes</button>
+    </div>
+
+    <!-- Planner Section -->
+    <div id="planner">
+        <h2>My Planner</h2>
+        <input type="text" id="taskInput" placeholder="Enter a new task...">
+        <button onclick="addTask()">Add Task</button>
+        <div id="tasks"></div>
+    </div>
+
+    <!-- File Drop Area -->
+<div id="drop-area">
+    Drag & Drop any file here
+    <embed id="file-preview" style="display:none; width:100%; height:100%; border-radius:10px;">
+</div>
+
+
+    <script>
+        let tracks = [
+            { src: 'lofi1.mp3', name: 'Track 1' },
+            { src: 'lofi2.mp3', name: 'Track 2' },
+            { src: 'lofi3.mp3', name: 'Track 3' },
+            { src: 'lofi4.mp3', name: 'Track 4' },
+            { src: 'lofi5.mp3', name: 'Track 5' },
+            { src: 'lofi6.mp3', name: 'Track 6' },
+            { src: 'lofi7.mp3', name: 'Track 7' },
+            { src: 'lofi8.mp3', name: 'Track 8' },
+            { src: 'lofi9.mp3', name: 'Track 9' }
+        ];
+        let currentTrackIndex = 0;
+
+        function loadTrack(index) {
+            let audioPlayer = document.getElementById('audioPlayer');
+            audioPlayer.src = tracks[index].src;
+            audioPlayer.load();
+            audioPlayer.play();
+        }
+        document.getElementById('audioPlayer').addEventListener('ended', () => {
+            nextTrack();
+        });
+
+        function nextTrack() {
+            currentTrackIndex = (currentTrackIndex + 1) % tracks.length;
+            loadTrack(currentTrackIndex);
+        }
+
+        function previousTrack() {
+            currentTrackIndex = (currentTrackIndex - 1 + tracks.length) % tracks.length;
+            loadTrack(currentTrackIndex);
+        }
+
+        function togglePlanner() {
+            var planner = document.getElementById('planner');
+            planner.style.display = planner.style.display === 'none' || planner.style.display === '' ? 'block' : 'none';
+        }
+
+        function toggleDropArea() {
+            var dropArea = document.getElementById('drop-area');
+            dropArea.style.display = dropArea.style.display === 'none' || dropArea.style.display === '' ? 'flex' : 'none';
+        }
+
+        function toggleNoteArea() {
+            var noteArea = document.getElementById('noteArea');
+            noteArea.style.display = noteArea.style.display === 'none' || noteArea.style.display === '' ? 'block' : 'none';
+        }
+
+        function changeBackground() {
+            var selectedBackground = document.getElementById('backgroundSelect').value;
+            document.body.style.backgroundImage = `url(${selectedBackground})`;
+        }
+
+        function addTask() {
+            var taskInput = document.getElementById('taskInput');
+            var taskText = taskInput.value.trim();
+            if (taskText !== '') {
+                var task = document.createElement('div');
+                task.className = 'task';
+                task.innerHTML = `<input type="checkbox" onchange="this.parentElement.classList.toggle('completed')"> ${taskText} <button onclick="this.parentElement.remove()">Remove</button>`;
+                document.getElementById('tasks').appendChild(task);
+                taskInput.value = '';
+            }
+        }
+
+        function exportNotes() {
+            var notes = document.getElementById('noteTextArea').value;
+            var blob = new Blob([notes], { type: 'text/plain' });
+            var url = URL.createObjectURL(blob);
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'notes.txt';
+            a.click();
+            URL.revokeObjectURL(url);
+        }
+
+        function toggleFullscreen() {
+            if (!document.fullscreenElement) {
+                document.documentElement.requestFullscreen();
+            } else {
+                if (document.exitFullscreen) {
+                    document.exitFullscreen();
+                }
+            }
+        }
+        
+        // File drop area functionality
+        let dropArea = document.getElementById('drop-area');
+        let filePreview = document.getElementById('file-preview');
+
+        dropArea.addEventListener('dragover', (event) => {
+            event.preventDefault();
+            dropArea.classList.add('dragover');
+        });
+
+        dropArea.addEventListener('dragleave', () => {
+        dropArea.classList.remove('dragover');
+        });
+
+        dropArea.addEventListener('drop', (event) => {
+            event.preventDefault();
+            dropArea.classList.remove('dragover');
+
+        const files = event.dataTransfer.files;
+ 
+       if (files.length > 0) {
+        handleFile(files[0]);
+    }
+});
+
+function handleFile(file) {
+    const fileType = file.type;
+    const fileURL = URL.createObjectURL(file);
+    dropArea.innerHTML = ''; // Clear previous content
+
+    // Check the file type and handle accordingly
+    if (fileType === 'application/pdf') {
+        dropArea.innerHTML = `<embed src="${fileURL}" width="100%" height="100%" type="application/pdf">`;
+    } else if (fileType.startsWith('image/')) {
+        const img = document.createElement('img');
+        img.src = fileURL;
+        img.style.width = '100%';
+        img.style.height = 'auto';
+        dropArea.appendChild(img);
+    } else if (fileType.startsWith('video/')) {
+        const videoElement = document.createElement('video');
+        videoElement.src = fileURL;
+        videoElement.controls = true;
+        dropArea.appendChild(videoElement);
+    } else if (fileType === 'application/vnd.ms-powerpoint' || fileType === 'application/vnd.openxmlformats-officedocument.presentationml.presentation') {
+        const viewerURL = `https://docs.google.com/gview?url=${fileURL}&embedded=true`;
+        dropArea.innerHTML = `<iframe src="${viewerURL}" width="100%" height="100%"></iframe>`;
+    } else {
+        dropArea.innerHTML = `File type not supported for preview: <strong>${file.name}</strong>`;
+    }
+}
+      
+    </script>
+</body>
+</html>
