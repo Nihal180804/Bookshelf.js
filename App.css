@@ -1,0 +1,197 @@
+#noteArea {
+    width: 300px;
+    height: 400px;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 20px;
+    border-radius: 10px;
+    box-sizing: border-box;
+    display: none;
+    position: absolute;
+    top: 15%;
+    right: 10px;
+    z-index: 1000;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+#noteArea textarea {
+    width: 100%;
+    height: 300px;
+    background-color: #333;
+    color: white;
+    border: none;
+    padding: 10px;
+    font-size: 1em;
+    border-radius: 5px;
+}
+
+#noteArea button {
+    margin-top: 10px;
+    padding: 10px;
+    background-color: #444;
+    border: none;
+    color: white;
+    font-size: 1em;
+    cursor: pointer;
+    border-radius: 5px;
+}
+
+#noteArea button:hover {
+    background-color: #555;
+}
+
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    color: white;
+    display: flex;
+    flex-direction: column;
+    height: 100vh;
+    text-align: center;
+    background-attachment: fixed;
+    transition: background-image 0.5s ease-in-out;
+    background-size: cover;
+    background-position: center;
+    background-image: url('images/background1.gif');
+}
+
+#topRightText {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 2em;
+}
+
+#mainContent {
+    display: flex;
+    flex: 1;
+    padding: 20px;
+    box-sizing: border-box;
+    margin-bottom: 60px;
+}
+
+#planner {
+    width: 300px;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 20px;
+    border-radius: 10px;
+    box-sizing: border-box;
+    display: none;
+    position: absolute;
+    top: 10%;
+    left: 0;
+    z-index: 1000;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+#tasks {
+    margin-top: 20px;
+}
+
+.task {
+    background-color: #333;
+    padding: 10px;
+    margin: 5px 0;
+    border-radius: 5px;
+    text-align: left;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.task input[type="checkbox"] {
+    margin-right: 10px;
+}
+
+.task.completed {
+    text-decoration: line-through;
+    color: #888;
+}
+
+#backgroundSelector {
+    display: inline-block;
+    margin-left: 20px;
+}
+
+#backgroundSelector label {
+    display: block;
+    margin-bottom: 10px;
+}
+
+#backgroundSelector select {
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+    font-size: 1em;
+    background-color: #444;
+    color: white;
+}
+
+#musicPlayer {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: rgba(0, 0, 0, 0.8);
+    padding: 10px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-top: 1px solid #333;
+    box-sizing: border-box;
+}
+
+#musicPlayer button {
+    background: none;
+    border: none;
+    color: white;
+    font-size: 1.5em;
+    margin: 0 20px;
+    cursor: pointer;
+}
+
+#musicPlayer audio {
+    width: 300px;
+    outline: none;
+}
+
+#drop-area {
+    width: 40%;
+    height: 650px;
+    border: 3px dashed transparent;
+    border-radius: 10px;
+    display: none;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    color: #ffffff;
+    font-size: 16px;
+    background-color: #000000;
+    transition: background-color 0.3s;
+    overflow: hidden;
+    position: absolute;
+    resize: both;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 1000;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+}
+
+#drop-area.dragover {
+    background-color: #e0e0e0;
+}
+ #resize-handle {
+    width: 10px;
+    height: 10px;
+    background: #333;
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    cursor: se-resize;
+}
+
+#drop-area embed {
+    width: 100%;
+    height: 100%;
+    border-radius: 10px;
+}
