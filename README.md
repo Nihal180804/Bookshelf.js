@@ -31,6 +31,8 @@ Backend: Node.js, Express.js
 
 Database: MongoDB
 
+Try it out: https://bookshelf-js-silk.vercel.app/
+
 # Installation & Setup ⚙️
 
 ## 1. Clone the Repository
