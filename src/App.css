@@ -378,12 +378,12 @@ audio::-webkit-media-controls-time-remaining-display {
 
 .resize-handle {
   position: absolute;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.2);
   border: 1px solid rgba(0, 0, 0, 0.2);
 }
 
 .resize-handle:hover {
-  background: rgba(255, 255, 255, 1);
+  background: rgba(255, 255, 255, 0.2);
 }
 
 .resize-e {

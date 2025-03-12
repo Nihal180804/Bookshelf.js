@@ -31,6 +31,8 @@ function App() {
     const [startPosition, setStartPosition] = useState({ x: 0, y: 0 });
     const dropAreaRef = useRef(null);
     const [showBackgroundPreview, setShowBackgroundPreview] = useState(false);
+    const [showDropAreaOpen, setshowDropAreaOpen] = useState(false);
+    
 
     const backgroundDetails = {
         'background1.gif': { 
@@ -338,6 +340,18 @@ function App() {
             document.exitFullscreen();
         }
     };
+    const openSpotifyPopup = () => {
+        const width = 700; // Adjust width for side popup
+        const height = 500; // Adjust height
+        const left = window.screen.width - width - 15; // Position it to the right side
+        const top = 250; // Position it near the top
+    
+        window.open(
+          "https://open.spotify.com",
+          "SpotifyPopup",
+          `width=${width},height=${height},left=${left},top=${top},resizable=yes,scrollbars=yes`
+        );
+      };
     
 
         return (
@@ -361,9 +375,10 @@ function App() {
                 <button onClick={toggleNoteArea} title="Notes">📝</button>
                 <button onClick={togglePreloadedDocuments} title="Preloaded Documents">🗃️</button>
                 <button onClick={toggleBackgroundPreview} title="BackgroundSelector">🖼️</button>
+                <button onClick={openSpotifyPopup} title= "Open Spotify" >🎵</button>
                 <button onClick={toggleFullscreen} title="Fullscreen">⛶</button>
-                
             </div>
+            
             {!cookiesAccepted && (
                 <div className="cookie-popup">
                     <div className="cookie-popup-content">
@@ -470,12 +485,19 @@ function App() {
                     {preloadedDocuments.length > 0 ? (
                         preloadedDocuments.map((document, index) => (
                             <div key={index} className="preloaded-document">
-                                <span 
-                                    onClick={() => handleFile(document)}
+                            <span 
+                                onClick={() => {
+                                        if (!showDropArea) {
+                                            setShowDropArea(true); // Open drop area if it's closed
+                                            setTimeout(() => handleFile(document), 100); // Wait for UI update
+                                        } else {
+                                            handleFile(document); // Directly load the file if drop area is already open
+                                         }
+                                    }}
                                     style={{ cursor: 'pointer' }}
-                                >
+                                        >
                                     {document.name}
-                                </span>
+                            </span>
                                 <button 
                                     onClick={() => removePreloadedDocument(index)}
                                 >
@@ -490,7 +512,6 @@ function App() {
                     )}
                 </div>
             )}
-
             {showDropArea && (
                 <div id="drop-area-container">
                     <div
@@ -504,7 +525,7 @@ function App() {
                             borderRadius: '8px',
                             padding: '20px',
                             textAlign: 'center',
-                            backgroundColor: 'rgba(255, 255, 255, 0.8)'
+                            backgroundColor: 'rgba(255, 255, 255, 0.15);'
                         }}
                         onDragOver={(e) => e.preventDefault()}
                         onDrop={handleFileDrop}
@@ -514,6 +535,7 @@ function App() {
                             height: '100%', 
                             overflow: 'hidden',
                             transformOrigin: 'center center'
+                            
                         }}>
                             Drag & Drop any file here
                         </div>
@@ -532,7 +554,42 @@ function App() {
                             onMouseDown={(e) => handleMouseDown(e, 'se')}
                         />
                     </div>
-                </div>
+                    
+                    {/* Transparent Browse Files Button */}
+                    <input 
+                        type="file" 
+                        ref={fileInputRef} 
+                        style={{ display: 'none' }} 
+                        onChange={(e) => {
+                            if (e.target.files.length > 0) {
+                                handleFile(e.target.files[0]);
+                                addPreloadedDocument(e.target.files[0]);
+                            }
+                        }}
+                    />
+                    <button 
+                        onClick={() => fileInputRef.current.click()}
+                        style={{
+                            backgroundColor: 'rgba(255, 255, 255, 0.2)', // Slightly transparent white
+                            color: 'white',
+                            border: 'none',
+                            cursor: 'pointer',
+                            borderRadius: '20%', // This makes it a perfect circle
+                            width: '40px', // Fixed width
+                            height: '40px', // Same as width to ensure a circle
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'center',
+                            fontSize: '20px',
+                            marginTop: '10px',
+                            outline: 'none', // Removes default focus outline
+                            transition: 'background-color 0.3s ease' // Optional: smooth hover effect
+                        }}
+                        onMouseOver={(e) => e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.3)'}
+                        onMouseOut={(e) => e.target.style.backgroundColor = 'rgba(255, 255, 255, 0.2)'}
+                    >
+                      📁
+                    </button>                </div>
             )}
         </div>
     );
